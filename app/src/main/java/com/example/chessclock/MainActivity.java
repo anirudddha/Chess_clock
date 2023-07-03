@@ -2,18 +2,18 @@ package com.example.chessclock;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.SystemClock;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.Chronometer;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
+    private MediaPlayer mediaPlayer;
     private TextView textViewTimer1;
     private TextView textViewTimer2;
     private Button reset;
@@ -48,10 +48,12 @@ public class MainActivity extends AppCompatActivity {
         textViewTimer2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (isTimerRunning1) {
-                    pauseTimer1();
-                    startTimer2();
+//                    pauseTimer1();
+//                    startTimer2();
                 } else {
+                    playClickSound();
                     startTimer1();
                     if(isTimerRunning2) pauseTimer2();
                 }
@@ -62,9 +64,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (isTimerRunning2) {
-                    pauseTimer2();
-                    startTimer1();
+//                    pauseTimer2();
+//                    startTimer1();
                 } else {
+                    playClickSound();
                     startTimer2();
                     if(isTimerRunning1) pauseTimer1();
                 }
@@ -74,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         reset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                playresetsound();
                 resetTimer();
                 isBothTimersRunning = true;
             }
@@ -82,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
         pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                playresetsound();
                 if (isBothTimersRunning) {
                     pauseBothTimers();
                 } else {
@@ -144,6 +149,8 @@ public class MainActivity extends AppCompatActivity {
         updateTimer1();
         updateTimer2();
         pauseBothTimers();
+        isTimerRunning1 = false;
+        isTimerRunning2 = false;
     }
 
     private void updateTimer1() {
@@ -182,6 +189,29 @@ public class MainActivity extends AppCompatActivity {
         }
         isBothTimersRunning = true;
         pause.setText("Pause");
+    }
+
+    private void playClickSound() {
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+        }
+        mediaPlayer = MediaPlayer.create(this, R.raw.click_sound);
+        mediaPlayer.start();
+    }
+    private void playresetsound() {
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+        }
+        mediaPlayer = MediaPlayer.create(this, R.raw.reset_sound);
+        mediaPlayer.start();
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
     }
 
 }
